@@ -20,6 +20,7 @@ export default class Snake {
     body: SnakeBody[];
     direction: Vector;
     directionQueue: Vector | null;
+    dead: boolean;
 
     constructor(length: number = 3, bodySize: number = 10) {
         this.length = length;
@@ -27,10 +28,11 @@ export default class Snake {
         this.body =
             Array(length)
                 .fill(0)
-                .map((sb, i) => new SnakeBody(new Vector(i, 0)), bodySize);
+                .map((sb, i) => new SnakeBody(new Vector(0 - i, 0)), bodySize);
 
         this.direction = new Vector(1, 0);
         this.directionQueue = null;
+        this.dead = false;
     }
 
     public get head(): SnakeBody {
@@ -54,6 +56,11 @@ export default class Snake {
         // console.log(lastPos, this.body[0].position);
 
         this.body.filter((sb, i) => i > 0).forEach(sb => {
+
+            if (sb.position.equals(this.head.position)) this.die();
+            // console.log(sb.position, this.head.position);
+
+
             let tlpos = Object.assign(new Vector(), sb.position);
             sb.position = Object.assign(new Vector(), lastPos);
             lastPos = tlpos;
@@ -71,6 +78,12 @@ export default class Snake {
         this.length = this.body.length;
     }
 
+    die() {
+        console.log("dead");
+        this.dead = true;
+
+        this.update = () => { };
+    }
 }
 
 

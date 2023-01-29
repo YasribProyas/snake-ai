@@ -8,6 +8,7 @@ const app = document.getElementById("app");
 const height = 400;
 const width = 400;
 
+const walled = true;
 const grid = new Grid(height, width, 10);
 const snake = new Snake();
 
@@ -19,6 +20,7 @@ if (app) {
 
 
     p.setup = function () {
+
       p.createCanvas(height, width);
       // p.frameRate(2);
       p.frameRate(10);
@@ -29,23 +31,36 @@ if (app) {
 
     p.draw = function () {
       refresh(p);
+      apple.draw(p);
+
 
       if (snake.head.position.equals(apple.position)) {
-        // console.log("eat");
         snake.eat();
         apple = new Apple(grid.gridSize);
       }
 
-      // console.log(grid.gridSize.sub(snake.head.position));
+      if (!snake.dead) {
+        // #region snakeWall
+        if (snake.head.position.x >= grid.gridSize.x) {
+          if (walled) snake.die();
+          else { snake.head.position.x = 0; }
+        }
+        else if (snake.head.position.x < 0) {
+          if (walled) snake.die();
+          snake.head.position.x = grid.gridSize.x
+        };
+        if (snake.head.position.y >= grid.gridSize.y) {
+          if (walled) snake.die();
+          snake.head.position.y = 0;
+        }
+        else if (snake.head.position.y < 0) {
+          if (walled) snake.die();
+          snake.head.position.y = grid.gridSize.y;
+        }
+        // #endregion snakeWall
+        snake.update();
+      }
 
-      if (snake.head.position.x >= grid.gridSize.x) snake.head.position.x = 0;
-      else if (snake.head.position.x < 0) snake.head.position.x = grid.gridSize.x;
-      if (snake.head.position.y >= grid.gridSize.y) snake.head.position.y = 0;
-      else if (snake.head.position.y < 0) snake.head.position.y = grid.gridSize.y;
-
-      apple.draw(p);
-
-      snake.update();
       snake.draw(p);
 
     }
