@@ -27,7 +27,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-    - name: dependencies
+      - name: dependencies
         uses: actions/checkout@v3
         with:
           node-version: 16
