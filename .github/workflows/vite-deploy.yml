@@ -29,9 +29,8 @@ jobs:
       - name: dependencies
         with:
           node-version: 16
-      - run: npm i
-      - run: npm run build
-  
+      - run: npm i && npm run build
+
   # Single deploy job since we're just deploying
   deploy:
     needs: build
@@ -48,7 +47,7 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload entire repository
-          path: './dist'
+          path: "./dist"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
