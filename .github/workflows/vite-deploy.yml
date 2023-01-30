@@ -19,6 +19,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: dependencies
+        with:
+          node-version: 16
+      - run: npm i
+
+  # Single deploy job since we're just deploying
   deploy:
     needs: build
     environment:
@@ -28,10 +37,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - run: npm install
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
