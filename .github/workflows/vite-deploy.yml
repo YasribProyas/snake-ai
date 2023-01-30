@@ -19,21 +19,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: dependencies
-        uses: actions/checkout@v3
-        with:
-          node-version: 16
-      - run: npm i
-
-      - name: build
-        uses: actions/checkout@v3
-        with:
-          node-version: 16
-      - run: npm run build
-
   # Single deploy job since we're just deploying
   deploy:
     needs: build
@@ -42,6 +27,11 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+    - name: dependencies
+        uses: actions/checkout@v3
+        with:
+          node-version: 16
+      - run: npm i
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
