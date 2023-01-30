@@ -23,13 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: dependencies
-        uses: "./node_modules"
+        uses: actions/checkout@v3
         with:
           node-version: 16
       - run: npm i
 
       - name: build
-        uses: "./dist"
+        uses: actions/checkout@v3
         with:
           node-version: 16
       - run: npm run build
