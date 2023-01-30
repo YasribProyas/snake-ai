@@ -16,7 +16,8 @@ let bestSnake: Snake;
 // let snake: Snake;
 const snakeCount = 100;
 
-let apple = new Apple(grid.gridSize);
+// let apple = new Apple(grid.gridSize);
+let apples = new Array(snakeCount).fill(0).map(s => new Apple(grid.gridSize));
 
 if (app) {
 
@@ -26,13 +27,16 @@ if (app) {
     p.setup = function () {
 
       p.createCanvas(height, width);
+      // p.createCanvas(height + 100, width + 100);
       // p.frameRate(2);
       p.frameRate(10);
       // p.colorMode(p.RGB);
       refresh(p);
       // snakes = new Array(10).fill(new Snake(p.color(Math.round(Math.random() * 255), Math.round(Math.random() * 255), Math.round(Math.random() * 255), 100)));
-      snakes = new Array(snakeCount).fill(0).map(s => new Snake(randomColor(p)));
+      reload(p);
 
+
+      let saveBtn = p.createButton("save best snake").mouseClicked(save);
     }
 
 
@@ -40,21 +44,26 @@ if (app) {
 
     p.draw = function () {
       refresh(p);
-      apple.draw(p);
       // console.log(snakes);
 
-      snakes.forEach(snake => {
+      snakes.forEach((snake, si) => {
 
-        if (snake.head.position.equals(apple.position)) {
+        if (snake.head.position.equals(apples[si].position)) {
           snake.eat();
-          apple = new Apple(grid.gridSize);
+          apples[si] = new Apple(grid.gridSize);
 
-          bestSnake = snakes.reduce((pv, cv, ci) => {
+          let newBestSnake = snakes.reduce((pv, cv, ci) => {
             if (pv.body.length > cv.body.length) return pv;
             return cv;
           });
+          if (newBestSnake != bestSnake) {
+            if (bestSnake) bestSnake.isBestSnake = false;
+            bestSnake = newBestSnake;
+            bestSnake.isBestSnake = true;
+          }
         }
 
+        snake.draw(p);
         if (!snake.dead) {
           // #region snakeWall
           if (snake.head.position.x >= grid.gridSize.x) {
@@ -64,7 +73,7 @@ if (app) {
           else if (snake.head.position.x < 0) {
             if (walled) snake.die();
             else
-              snake.head.position.x = grid.gridSize.x
+              snake.head.position.x = grid.gridSize.x - 1
           };
           if (snake.head.position.y >= grid.gridSize.y) {
             if (walled) snake.die();
@@ -74,15 +83,15 @@ if (app) {
           else if (snake.head.position.y < 0) {
             if (walled) snake.die();
             else
-              snake.head.position.y = grid.gridSize.y;
+              snake.head.position.y = grid.gridSize.y - 1;
           }
           // #endregion snakeWall
-          snake.update(apple, grid.gridSize);
+          snake.update(apples[si], grid.gridSize);
+          apples[si].draw(p);
         }
 
-        snake.draw(p);
-        if (bestSnake)
-          bestSnake.color = p.color(255, 0, 0, 255);
+        // if (bestSnake)
+        //   bestSnake.color = p.color(255, 0, 0, 255);
       });
 
     }
@@ -123,7 +132,8 @@ if (app) {
         case p.BACKSPACE:
           // snake = new Snake(randomColor(p));
           // snakes = new Array(10).fill(new Snake(p.color(Math.round(Math.random() * 255), Math.round(Math.random() * 255), Math.round(Math.random() * 255), 100)));
-          snakes = new Array(snakeCount).fill(0).map(s => new Snake(randomColor(p)));
+          // snakes = new Array(snakeCount).fill(0).map(s => new Snake(randomColor(p)));
+          reload(p);
 
           break;
         default:
@@ -141,8 +151,21 @@ function refresh(p: p5) {
   // p.background(p.color(255));
   grid.draw(p);
 }
+function reload(p: p5) {
+  snakes = new Array(snakeCount).fill(0).map(s => new Snake(randomColor(p)));
+  bestSnake = snakes[0];
+  snakes[0].isBestSnake = true;
+  let savedBrain = localStorage.getItem("bestSnake");
+  if (savedBrain) {
+    bestSnake.brain = JSON.parse(savedBrain);
+  }
+}
 
 
 function randomColor(p: p5) {
   return p.color(Math.round(Math.random() * 255), Math.round(Math.random() * 255), Math.round(Math.random() * 255), 100);
+}
+
+function save() {
+  localStorage.setItem("bestSnake", JSON.stringify(bestSnake.brain));
 }

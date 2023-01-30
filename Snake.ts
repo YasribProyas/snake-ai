@@ -25,6 +25,7 @@ export default class Snake {
     dead: boolean;
     brain: NeuralNetwork;
     color: Color;
+    isBestSnake: boolean;
     constructor(color: Color, length: number = 3, bodySize: number = 10) {
         this.length = length;
         this.bodySize = bodySize;
@@ -38,6 +39,7 @@ export default class Snake {
         this.dead = false;
         this.brain = new NeuralNetwork([2, 6, 4]);
         this.color = color;
+        this.isBestSnake = false;
     }
 
     public get head(): SnakeBody {
@@ -83,7 +85,7 @@ export default class Snake {
 
     draw(p: p5) {
         // this.color = p.color(255, 204, 0);
-        p.fill(this.color);
+        p.fill(this.isBestSnake ? p.color(255, 0, 0) : this.color);
         this.body.forEach(sb => {
             sb.draw(p);
         });
