@@ -26,6 +26,7 @@ export default class Snake {
     brain: NeuralNetwork;
     color: Color;
     isBestSnake: boolean;
+    movestreak: { move: Vector, streak: 0 };
     constructor(color: Color, length: number = 3, bodySize: number = 10) {
         this.length = length;
         this.bodySize = bodySize;
@@ -40,6 +41,7 @@ export default class Snake {
         this.brain = new NeuralNetwork([2, 6, 4]);
         this.color = color;
         this.isBestSnake = false;
+        this.movestreak = { move: this.direction, streak: 0 };
     }
 
     public get head(): SnakeBody {
@@ -48,6 +50,19 @@ export default class Snake {
 
 
     update(apple: Apple, gridSize: Vector) {
+
+        //* delete frozen brain
+        if (this.direction?.equals(this.movestreak.move)) {
+            this.movestreak.streak++;
+
+            if (this.movestreak.streak >= 100) {
+                this.brain = new NeuralNetwork([2, 6, 4]);
+            }
+        } else {
+            this.movestreak.move = this.direction;
+            this.movestreak.streak = 0;
+
+        }
 
         const distance = [
             Math.abs((apple.position.x - this.head.position.x) / gridSize.mag()),

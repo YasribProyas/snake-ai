@@ -1,3 +1,5 @@
+import p5 from "p5";
+
 export default class NeuralNetwork {
     levels: Level[];
     constructor(neuronCounts: number[]) {
@@ -21,6 +23,14 @@ export default class NeuralNetwork {
 
         return outputs;
     }
+
+    static mutate(network: NeuralNetwork, amount = 1,) {
+        network.levels.forEach(level => {
+            level.biases = level.biases.map(bias => lerp(bias, Math.random() * 2 - 1, amount));
+
+            level.weights.map(weightI => weightI.map(weightJ => lerp(weightJ, Math.random() * 2 - 1, amount)));
+        });
+    }
 }
 
 class Level {
@@ -29,7 +39,7 @@ class Level {
     inputs: any[];
     outputs: any[];
     biases: any[];
-    weights: any[];
+    weights: any[][];
 
     constructor(inputCount: number, outputCount: number) {
         this.inputCount = inputCount;
@@ -82,3 +92,7 @@ class Level {
         return level.outputs;
     }
 }
+
+function lerp(start: number, stop: number, amt: number) {
+    return amt * (stop - start) + start;
+};
