@@ -38,9 +38,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: dependencies
+      - run: npm i
         with:
           node-version: 16
-        run: npm i
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
