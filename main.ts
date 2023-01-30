@@ -62,6 +62,10 @@ if (app) {
             bestSnake = newBestSnake;
             bestSnake.isBestSnake = true;
           }
+          if (bestSnake.body.length > 15) {
+            save();
+            reload(p);
+          }
         }
 
         snake.draw(p);
